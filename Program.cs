@@ -10,9 +10,9 @@ namespace Day21
     {
         static void Main(string[] args)
         {
-
+            string url = "https://www.themealdb.com/api/json/v1/1/search.php?f=w";
             HttpClient client = new HttpClient();
-            HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, "https://www.themealdb.com/api/json/v1/1/search.php?f=w");
+            HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, url);
             HttpResponseMessage response = client.Send(webRequest);
             Stream stream = response.Content.ReadAsStream();
             StreamReader reader = new StreamReader(stream);
@@ -29,9 +29,9 @@ namespace Day21
             }
 
             string serializedMeals = JsonSerializer.Serialize(newMeals);
-            Console.WriteLine();
-            Console.WriteLine(serializedMeals);
-            File.WriteAllText("MEALS.json", serializedMeals);
+            string outputFileName = "MEALS_" + Char.ToUpper(url[^1]) + ".json";
+            File.WriteAllText(outputFileName, serializedMeals);
+            Console.WriteLine($"New JSON file: " + outputFileName);
             Console.WriteLine("Finished Program...");
         }
 
