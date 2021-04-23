@@ -10,7 +10,7 @@ namespace Day21
     {
         static void Main(string[] args)
         {
-            string url = "https://www.themealdb.com/api/json/v1/1/search.php?f=b";
+            string url = "https://www.themealdb.com/api/json/v1/1/search.php?f=a";
             HttpClient client = new HttpClient();
             HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, url);
             HttpResponseMessage response = client.Send(webRequest);
@@ -18,11 +18,10 @@ namespace Day21
             StreamReader reader = new StreamReader(stream);
             string data = reader.ReadToEnd();
             JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            ListMealsBase oldMeals = JsonSerializer.Deserialize<ListMealsBase>(data, options);
             ListMealsIngredients oldIngredients = JsonSerializer.Deserialize<ListMealsIngredients>(data, options);
             MealsNew newMeals = JsonSerializer.Deserialize<MealsNew>(data, options);
 
-            for (int i = 0; i < oldMeals.Meals.Length; i++)
+            for (int i = 0; i < newMeals.meals.Length; i++)
             {
                 OldIngredData ingredients = oldIngredients.Meals[i];
                 newMeals.meals[i].addIngredients(ingredients);
@@ -31,13 +30,8 @@ namespace Day21
             string serializedMeals = JsonSerializer.Serialize(newMeals);
             string outputFileName = ("MEALS_" + url[^1]).ToUpper() + ".json";
             File.WriteAllText(outputFileName, serializedMeals);
-            Console.WriteLine($"New JSON file: " + outputFileName);
-            Console.WriteLine("Finished Program...");
-        }
-
-        public class ListMealsBase
-        {
-            public MealBase[] Meals { get; set; }
+            Console.WriteLine($"Finished restructuring ingredients!");
+            Console.WriteLine("Output: " + outputFileName);
         }
 
         public class ListMealsIngredients
