@@ -26,7 +26,6 @@ namespace Day21
                 }
                 else 
                 {
-                    Console.WriteLine($"Ending ingredients list, last valid was ingredient{index-1}");
                     break;
                 }                
                 index++;
