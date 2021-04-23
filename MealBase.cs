@@ -22,10 +22,6 @@ namespace Day21
         public string strCreativeCommonsConfirmed { get; set; }
         public string dateModified { get; set; }
 
-        public MealNew CreateFormattedMeal(OldIngredData ingredInfo)
-        {
-            return new MealNew(ingredInfo);
-        }
     }
 
 

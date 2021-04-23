@@ -10,50 +10,29 @@ namespace Day21
     {
         static void Main(string[] args)
         {
-            //Digimon agumon = new Digimon("Agumon", 5);
-
-            //string nameVal = agumon.GetType().GetProperty("DigimonName").GetValue(agumon, null).ToString();
-            //string levelVal = agumon.GetType().GetProperty("DigimonLevel").GetValue(agumon, null).ToString();
-
-            //Console.WriteLine(nameVal);
-            //Console.WriteLine(levelVal);
-
 
             HttpClient client = new HttpClient();
-            HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, "https://www.themealdb.com/api/json/v1/1/search.php?f=y");
+            HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, "https://www.themealdb.com/api/json/v1/1/search.php?f=w");
             HttpResponseMessage response = client.Send(webRequest);
             Stream stream = response.Content.ReadAsStream();
             StreamReader reader = new StreamReader(stream);
             string data = reader.ReadToEnd();
             JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             ListMealsBase oldMeals = JsonSerializer.Deserialize<ListMealsBase>(data, options);
-
             ListMealsIngredients oldIngredients = JsonSerializer.Deserialize<ListMealsIngredients>(data, options);
-
-            MealsNew newMeals = new MealsNew();
-            Console.WriteLine($"oldmeals length: {oldMeals.Meals.Length}");
-            Console.WriteLine($"oldIngredients length: {oldIngredients.Meals.Length}");
+            MealsNew newMeals = JsonSerializer.Deserialize<MealsNew>(data, options);
 
             for (int i = 0; i < oldMeals.Meals.Length; i++)
             {
-                MealBase baseMeal = oldMeals.Meals[i];
                 OldIngredData ingredients = oldIngredients.Meals[i];
-                newMeals.Meals.Add(baseMeal.CreateFormattedMeal(ingredients));
+                newMeals.meals[i].addIngredients(ingredients);
             }
 
+            string serializedMeals = JsonSerializer.Serialize(newMeals);
+            Console.WriteLine();
+            Console.WriteLine(serializedMeals);
+            File.WriteAllText("MEALS.json", serializedMeals);
             Console.WriteLine("Finished Program...");
-        }
-
-        public class Digimon
-        {
-            public string DigimonName { get; set; }
-            public int DigimonLevel { get; set; }
-
-            public Digimon(string name, int level)
-            {
-                DigimonName = name;
-                DigimonLevel = level;
-            }
         }
 
         public class ListMealsBase
@@ -68,14 +47,7 @@ namespace Day21
 
         public class MealsNew
         {
-            public List<MealNew> Meals { get; set; }
-
-            public MealsNew()
-            {
-                Meals = new List<MealNew>();
-            }
-
-
+            public MealNew[] meals { get; set; }
         }
 
 

@@ -10,7 +10,7 @@ namespace Day21
     {
         public List<Ingredient> ingredients { get; set; }
 
-        public MealNew(OldIngredData ingredInfo) : base()
+        public void addIngredients(OldIngredData ingredInfo)
         {
             ingredients = new List<Ingredient>();
             int index = 1;
@@ -18,23 +18,33 @@ namespace Day21
             string ingredAmt = "";
             while (index <= 20)
             {
-                ingredName = ingredInfo.GetType().GetProperty("strIngredient" + index).GetValue(ingredInfo, null).ToString();
-                ingredAmt = ingredInfo.GetType().GetProperty("strMeasure" + index).GetValue(ingredInfo, null).ToString();
-                ingredients.Add(new Ingredient(ingredName, ingredAmt));
+                if (ingredInfo.GetType().GetProperty("strIngredient" + index).GetValue(ingredInfo, null) != null && ingredInfo.GetType().GetProperty("strIngredient" + index).GetValue(ingredInfo, null).ToString() != "")
+                {
+                    ingredName = ingredInfo.GetType().GetProperty("strIngredient" + index).GetValue(ingredInfo, null).ToString();
+                    ingredAmt = ingredInfo.GetType().GetProperty("strMeasure" + index).GetValue(ingredInfo, null).ToString();
+                    ingredients.Add(new Ingredient(ingredName, ingredAmt));
+                }
+                else 
+                {
+                    Console.WriteLine($"Ending ingredients list, last valid was ingredient{index-1}");
+                    break;
+                }                
                 index++;
+            }
+        }
+
+        public class Ingredient
+        {
+            public string strIngredient { get; set; }
+            public string strMeasure { get; set; }
+
+            public Ingredient(string ingredientName, string ingredientAmt)
+            {
+                strIngredient = ingredientName;
+                strMeasure = ingredientAmt;
             }
         }
     }
 
-    public class Ingredient
-    {
-        public string strIngredient { get; set; }
-        public string strMeasure { get; set; }
-
-        public Ingredient(string ingredientName, string ingredientAmt)
-        {
-            strIngredient = ingredientName;
-            strMeasure = ingredientAmt;
-        }
-    }
+    
 }
