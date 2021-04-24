@@ -11,13 +11,9 @@ namespace Day21
         static void Main(string[] args)
         {
             string url = "https://www.themealdb.com/api/json/v1/1/search.php?f=a";
-            HttpClient client = new HttpClient();
-            HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, url);
-            HttpResponseMessage response = client.Send(webRequest);
-            Stream stream = response.Content.ReadAsStream();
-            StreamReader reader = new StreamReader(stream);
-            string data = reader.ReadToEnd();
+            string data = GetDataFromHttp(url);
             JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
             ListMealsIngredients oldIngredients = JsonSerializer.Deserialize<ListMealsIngredients>(data, options);
             MealsNew newMeals = JsonSerializer.Deserialize<MealsNew>(data, options);
 
@@ -33,6 +29,17 @@ namespace Day21
             Console.WriteLine($"Finished restructuring ingredients!");
             Console.WriteLine("Output: " + outputFileName);
         }
+
+        static string GetDataFromHttp(string uri)
+        {
+            HttpClient client = new HttpClient();
+            HttpRequestMessage webRequest = new HttpRequestMessage(HttpMethod.Get, uri);
+            HttpResponseMessage response = client.Send(webRequest);
+            Stream stream = response.Content.ReadAsStream();
+            StreamReader reader = new StreamReader(stream);
+            return reader.ReadToEnd();
+        }
+
 
         public class ListMealsIngredients
         {
